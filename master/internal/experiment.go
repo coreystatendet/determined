@@ -77,7 +77,7 @@ type (
 
 		*model.Experiment
 		rm                  *actor.Ref
-		trialLogger         *actor.Ref
+		taskLogger          *actor.Ref
 		hpImportance        *actor.Ref
 		db                  *db.PgDB
 		searcher            *searcher.Searcher
@@ -141,7 +141,7 @@ func newExperiment(master *Master, expModel *model.Experiment, taskSpec *tasks.T
 	return &experiment{
 		Experiment:          expModel,
 		rm:                  master.rm,
-		trialLogger:         master.trialLogger,
+		taskLogger:          master.taskLogger,
 		hpImportance:        master.hpImportance,
 		db:                  master.db,
 		searcher:            search,
@@ -444,7 +444,7 @@ func (e *experiment) processOperations(
 			e.TrialSearcherState[op.RequestID] = state
 			ctx.ActorOf(op.RequestID, newTrial(
 				trialTaskID(e.ID, op.RequestID), e.JobID, e.StartTime, e.ID, e.State, state, e.rm,
-				e.trialLogger, e.db, config, checkpoint, e.taskSpec,
+				e.taskLogger, e.db, config, checkpoint, e.taskSpec,
 			))
 		case searcher.ValidateAfter:
 			state := e.TrialSearcherState[op.RequestID]

@@ -1,6 +1,10 @@
 package ptrs
 
-import "time"
+import (
+	"time"
+
+	"github.com/determined-ai/determined/master/pkg/model"
+)
 
 // BoolPtr is the "&true" you always wanted.
 func BoolPtr(val bool) *bool {
@@ -28,5 +32,10 @@ func StringPtr(val string) *string {
 
 // TimePtr is the &time.Now().UTC() you always wanted.
 func TimePtr(val time.Time) *time.Time {
+	return &val
+}
+
+// AllocationStatePtr is the &model.SomeAllocationState you always wanted.
+func AllocationStatePtr(val model.AllocationState) *model.AllocationState {
 	return &val
 }

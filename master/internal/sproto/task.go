@@ -6,6 +6,7 @@ import (
 
 	"github.com/determined-ai/determined/master/internal/job"
 	"github.com/determined-ai/determined/master/pkg/actor"
+	"github.com/determined-ai/determined/master/pkg/cproto"
 	"github.com/determined-ai/determined/master/pkg/model"
 	"github.com/determined-ai/determined/master/pkg/ptrs"
 	"github.com/determined-ai/determined/master/pkg/tasks"
@@ -136,31 +137,38 @@ type Reservation interface {
 }
 
 // Event is the union of all event types during the parent lifecycle.
-type Event struct {
-	ParentID    string    `json:"parent_id"`
-	ID          string    `json:"id"`
-	Seq         int       `json:"seq"`
-	Time        time.Time `json:"time"`
-	Description string    `json:"description"`
-	IsReady     bool      `json:"is_ready"`
-	State       string    `json:"state"`
-	ContainerID string    `json:"container_id"`
+type (
+	ContainerStartedEvent struct {
+		Container            cproto.Container
+		TaskContainerStarted TaskContainerStarted
+	}
 
-	ScheduledEvent *model.AllocationID `json:"scheduled_event"`
-	// AssignedEvent is triggered when the parent was assigned to an agent.
-	AssignedEvent *ResourcesAllocated `json:"assigned_event"`
-	// ContainerStartedEvent is triggered when the container started on an agent.
-	ContainerStartedEvent *TaskContainerStarted `json:"container_started_event"`
-	// ServiceReadyEvent is triggered when the service running in the container is ready to serve.
-	ServiceReadyEvent *bool `json:"service_ready_event"`
-	// TerminateRequestEvent is triggered when the scheduler has requested the container to
-	// terminate.
-	TerminateRequestEvent *ReleaseResources `json:"terminate_request_event"`
-	// ExitedEvent is triggered when the command has terminated.
-	ExitedEvent *string `json:"exited_event"`
-	// LogEvent is triggered when a new log message is available.
-	LogEvent *string `json:"log_event"`
-}
+	Event struct {
+		ParentID    string    `json:"parent_id"`
+		ID          string    `json:"id"`
+		Seq         int       `json:"seq"`
+		Time        time.Time `json:"time"`
+		Description string    `json:"description"`
+		IsReady     bool      `json:"is_ready"`
+		State       string    `json:"state"`
+		ContainerID string    `json:"container_id"`
+
+		ScheduledEvent *model.AllocationID `json:"scheduled_event"`
+		// AssignedEvent is triggered when the parent was assigned to an agent.
+		AssignedEvent *ResourcesAllocated `json:"assigned_event"`
+		// ContainerStartedEvent is triggered when the container started on an agent.
+		ContainerStartedEvent *ContainerStartedEvent `json:"container_started_event"`
+		// ServiceReadyEvent is triggered when the service running in the container is ready to serve.
+		ServiceReadyEvent *bool `json:"service_ready_event"`
+		// TerminateRequestEvent is triggered when the scheduler has requested the container to
+		// terminate.
+		TerminateRequestEvent *ReleaseResources `json:"terminate_request_event"`
+		// ExitedEvent is triggered when the command has terminated.
+		ExitedEvent *string `json:"exited_event"`
+		// LogEvent is triggered when a new log message is available.
+		LogEvent *string `json:"log_event"`
+	}
+)
 
 // ToTaskLog converts an event to a task log.
 func (ev *Event) ToTaskLog() model.TaskLog {
@@ -170,7 +178,7 @@ func (ev *Event) ToTaskLog() model.TaskLog {
 	case ev.ScheduledEvent != nil:
 		message = fmt.Sprintf("Scheduling %s (id: %s)", description, ev.ParentID)
 	case ev.ContainerStartedEvent != nil:
-		message = fmt.Sprintf("Container of %s has started", description)
+		message = fmt.Sprintf("Container for %s has started", description)
 	case ev.TerminateRequestEvent != nil:
 		message = fmt.Sprintf("%s was requested to terminate", description)
 	case ev.ExitedEvent != nil:

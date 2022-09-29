@@ -1036,6 +1036,48 @@ class v1CreateExperimentResponse:
             "config": self.config,
         }
 
+class v1CreateGroupRequest:
+    def __init__(
+        self,
+        *,
+        name: str,
+        addUsers: "typing.Optional[typing.Sequence[int]]" = None,
+    ):
+        self.name = name
+        self.addUsers = addUsers
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1CreateGroupRequest":
+        return cls(
+            name=obj["name"],
+            addUsers=obj.get("addUsers", None),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "name": self.name,
+            "addUsers": self.addUsers if self.addUsers is not None else None,
+        }
+
+class v1CreateGroupResponse:
+    def __init__(
+        self,
+        *,
+        group: "v1GroupDetails",
+    ):
+        self.group = group
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1CreateGroupResponse":
+        return cls(
+            group=v1GroupDetails.from_json(obj["group"]),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "group": self.group.to_json(),
+        }
+
 class v1CurrentUserResponse:
     def __init__(
         self,
@@ -1916,6 +1958,79 @@ class v1GetExperimentsResponse:
             "pagination": self.pagination.to_json(),
         }
 
+class v1GetGroupResponse:
+    def __init__(
+        self,
+        *,
+        group: "v1GroupDetails",
+    ):
+        self.group = group
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1GetGroupResponse":
+        return cls(
+            group=v1GroupDetails.from_json(obj["group"]),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "group": self.group.to_json(),
+        }
+
+class v1GetGroupsRequest:
+    def __init__(
+        self,
+        *,
+        limit: int,
+        name: "typing.Optional[str]" = None,
+        offset: "typing.Optional[int]" = None,
+        userId: "typing.Optional[int]" = None,
+    ):
+        self.userId = userId
+        self.name = name
+        self.offset = offset
+        self.limit = limit
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1GetGroupsRequest":
+        return cls(
+            userId=obj.get("userId", None),
+            name=obj.get("name", None),
+            offset=obj.get("offset", None),
+            limit=obj["limit"],
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "userId": self.userId if self.userId is not None else None,
+            "name": self.name if self.name is not None else None,
+            "offset": self.offset if self.offset is not None else None,
+            "limit": self.limit,
+        }
+
+class v1GetGroupsResponse:
+    def __init__(
+        self,
+        *,
+        groups: "typing.Optional[typing.Sequence[v1GroupSearchResult]]" = None,
+        pagination: "typing.Optional[v1Pagination]" = None,
+    ):
+        self.groups = groups
+        self.pagination = pagination
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1GetGroupsResponse":
+        return cls(
+            groups=[v1GroupSearchResult.from_json(x) for x in obj["groups"]] if obj.get("groups", None) is not None else None,
+            pagination=v1Pagination.from_json(obj["pagination"]) if obj.get("pagination", None) is not None else None,
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "groups": [x.to_json() for x in self.groups] if self.groups is not None else None,
+            "pagination": self.pagination.to_json() if self.pagination is not None else None,
+        }
+
 class v1GetHPImportanceResponse:
     def __init__(
         self,
@@ -2689,19 +2804,19 @@ class v1GetUserResponse:
     def __init__(
         self,
         *,
-        user: "typing.Optional[v1User]" = None,
+        user: "v1User",
     ):
         self.user = user
 
     @classmethod
     def from_json(cls, obj: Json) -> "v1GetUserResponse":
         return cls(
-            user=v1User.from_json(obj["user"]) if obj.get("user", None) is not None else None,
+            user=v1User.from_json(obj["user"]),
         )
 
     def to_json(self) -> typing.Any:
         return {
-            "user": self.user.to_json() if self.user is not None else None,
+            "user": self.user.to_json(),
         }
 
 class v1GetUserSettingResponse:
@@ -2830,6 +2945,79 @@ class v1GetWorkspacesResponse:
         return {
             "workspaces": [x.to_json() for x in self.workspaces],
             "pagination": self.pagination.to_json(),
+        }
+
+class v1Group:
+    def __init__(
+        self,
+        *,
+        groupId: "typing.Optional[int]" = None,
+        name: "typing.Optional[str]" = None,
+    ):
+        self.groupId = groupId
+        self.name = name
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1Group":
+        return cls(
+            groupId=obj.get("groupId", None),
+            name=obj.get("name", None),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "groupId": self.groupId if self.groupId is not None else None,
+            "name": self.name if self.name is not None else None,
+        }
+
+class v1GroupDetails:
+    def __init__(
+        self,
+        *,
+        groupId: "typing.Optional[int]" = None,
+        name: "typing.Optional[str]" = None,
+        users: "typing.Optional[typing.Sequence[v1User]]" = None,
+    ):
+        self.groupId = groupId
+        self.name = name
+        self.users = users
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1GroupDetails":
+        return cls(
+            groupId=obj.get("groupId", None),
+            name=obj.get("name", None),
+            users=[v1User.from_json(x) for x in obj["users"]] if obj.get("users", None) is not None else None,
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "groupId": self.groupId if self.groupId is not None else None,
+            "name": self.name if self.name is not None else None,
+            "users": [x.to_json() for x in self.users] if self.users is not None else None,
+        }
+
+class v1GroupSearchResult:
+    def __init__(
+        self,
+        *,
+        group: "v1Group",
+        numMembers: int,
+    ):
+        self.group = group
+        self.numMembers = numMembers
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1GroupSearchResult":
+        return cls(
+            group=v1Group.from_json(obj["group"]),
+            numMembers=obj["numMembers"],
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "group": self.group.to_json(),
+            "numMembers": self.numMembers,
         }
 
 class v1IdleNotebookRequest:
@@ -4027,19 +4215,31 @@ class v1PatchUser:
     def __init__(
         self,
         *,
+        active: "typing.Optional[bool]" = None,
+        admin: "typing.Optional[bool]" = None,
+        agentUserGroup: "typing.Optional[v1AgentUserGroup]" = None,
         displayName: "typing.Optional[str]" = None,
     ):
+        self.admin = admin
+        self.active = active
         self.displayName = displayName
+        self.agentUserGroup = agentUserGroup
 
     @classmethod
     def from_json(cls, obj: Json) -> "v1PatchUser":
         return cls(
+            admin=obj.get("admin", None),
+            active=obj.get("active", None),
             displayName=obj.get("displayName", None),
+            agentUserGroup=v1AgentUserGroup.from_json(obj["agentUserGroup"]) if obj.get("agentUserGroup", None) is not None else None,
         )
 
     def to_json(self) -> typing.Any:
         return {
+            "admin": self.admin if self.admin is not None else None,
+            "active": self.active if self.active is not None else None,
             "displayName": self.displayName if self.displayName is not None else None,
+            "agentUserGroup": self.agentUserGroup.to_json() if self.agentUserGroup is not None else None,
         }
 
 class v1PatchUserResponse:
@@ -6199,6 +6399,56 @@ class v1TrialsSnapshotResponseTrial:
             "batchesProcessed": self.batchesProcessed,
         }
 
+class v1UpdateGroupRequest:
+    def __init__(
+        self,
+        *,
+        groupId: int,
+        addUsers: "typing.Optional[typing.Sequence[int]]" = None,
+        name: "typing.Optional[str]" = None,
+        removeUsers: "typing.Optional[typing.Sequence[int]]" = None,
+    ):
+        self.groupId = groupId
+        self.name = name
+        self.addUsers = addUsers
+        self.removeUsers = removeUsers
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1UpdateGroupRequest":
+        return cls(
+            groupId=obj["groupId"],
+            name=obj.get("name", None),
+            addUsers=obj.get("addUsers", None),
+            removeUsers=obj.get("removeUsers", None),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "groupId": self.groupId,
+            "name": self.name if self.name is not None else None,
+            "addUsers": self.addUsers if self.addUsers is not None else None,
+            "removeUsers": self.removeUsers if self.removeUsers is not None else None,
+        }
+
+class v1UpdateGroupResponse:
+    def __init__(
+        self,
+        *,
+        group: "v1GroupDetails",
+    ):
+        self.group = group
+
+    @classmethod
+    def from_json(cls, obj: Json) -> "v1UpdateGroupResponse":
+        return cls(
+            group=v1GroupDetails.from_json(obj["group"]),
+        )
+
+    def to_json(self) -> typing.Any:
+        return {
+            "group": self.group.to_json(),
+        }
+
 class v1UpdateJobQueueRequest:
     def __init__(
         self,
@@ -6441,6 +6691,7 @@ def post_AckAllocationPreemptionSignal(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6460,6 +6711,7 @@ def post_ActivateExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6480,6 +6732,7 @@ def post_AddProjectNote(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1AddProjectNoteResponse.from_json(_resp.json())
@@ -6500,6 +6753,7 @@ def post_AllocationAllGather(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1AllocationAllGatherResponse.from_json(_resp.json())
@@ -6520,6 +6774,7 @@ def post_AllocationPendingPreemptionSignal(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6542,6 +6797,7 @@ def get_AllocationPreemptionSignal(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1AllocationPreemptionSignalResponse.from_json(_resp.json())
@@ -6562,6 +6818,7 @@ def post_AllocationReady(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6582,6 +6839,7 @@ def get_AllocationRendezvousInfo(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1AllocationRendezvousInfoResponse.from_json(_resp.json())
@@ -6601,6 +6859,7 @@ def post_ArchiveExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6620,6 +6879,7 @@ def post_ArchiveModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6639,6 +6899,7 @@ def post_ArchiveProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6658,6 +6919,7 @@ def post_ArchiveWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6677,6 +6939,7 @@ def post_CancelExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6710,6 +6973,7 @@ def get_CompareTrials(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1CompareTrialsResponse.from_json(_resp.json())
@@ -6730,6 +6994,7 @@ def post_CompleteTrialSearcherValidation(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6749,6 +7014,7 @@ def post_ComputeHPImportance(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6768,10 +7034,31 @@ def post_CreateExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1CreateExperimentResponse.from_json(_resp.json())
     raise APIHttpError("post_CreateExperiment", _resp)
+
+def post_CreateGroup(
+    session: "api.Session",
+    *,
+    body: "v1CreateGroupRequest",
+) -> "v1CreateGroupResponse":
+    _params = None
+    _resp = session._do_request(
+        method="POST",
+        path="/api/v1/groups",
+        params=_params,
+        json=body.to_json(),
+        data=None,
+        headers=None,
+        timeout=None,
+        stream=False,
+    )
+    if _resp.status_code == 200:
+        return v1CreateGroupResponse.from_json(_resp.json())
+    raise APIHttpError("post_CreateGroup", _resp)
 
 def get_CurrentUser(
     session: "api.Session",
@@ -6785,6 +7072,7 @@ def get_CurrentUser(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1CurrentUserResponse.from_json(_resp.json())
@@ -6804,6 +7092,7 @@ def delete_DeleteCheckpoints(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6823,10 +7112,31 @@ def delete_DeleteExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
     raise APIHttpError("delete_DeleteExperiment", _resp)
+
+def delete_DeleteGroup(
+    session: "api.Session",
+    *,
+    groupId: int,
+) -> None:
+    _params = None
+    _resp = session._do_request(
+        method="DELETE",
+        path=f"/api/v1/groups/{groupId}",
+        params=_params,
+        json=None,
+        data=None,
+        headers=None,
+        timeout=None,
+        stream=False,
+    )
+    if _resp.status_code == 200:
+        return
+    raise APIHttpError("delete_DeleteGroup", _resp)
 
 def delete_DeleteModel(
     session: "api.Session",
@@ -6842,6 +7152,7 @@ def delete_DeleteModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6862,6 +7173,7 @@ def delete_DeleteModelVersion(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6881,6 +7193,7 @@ def delete_DeleteProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1DeleteProjectResponse.from_json(_resp.json())
@@ -6900,6 +7213,7 @@ def delete_DeleteTemplate(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -6919,6 +7233,7 @@ def delete_DeleteWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1DeleteWorkspaceResponse.from_json(_resp.json())
@@ -6939,6 +7254,7 @@ def post_DisableAgent(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1DisableAgentResponse.from_json(_resp.json())
@@ -6959,6 +7275,7 @@ def post_DisableSlot(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1DisableSlotResponse.from_json(_resp.json())
@@ -6978,6 +7295,7 @@ def post_EnableAgent(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1EnableAgentResponse.from_json(_resp.json())
@@ -6998,6 +7316,7 @@ def post_EnableSlot(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1EnableSlotResponse.from_json(_resp.json())
@@ -7015,6 +7334,7 @@ def get_GetActiveTasksCount(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetActiveTasksCountResponse.from_json(_resp.json())
@@ -7034,6 +7354,7 @@ def get_GetAgent(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetAgentResponse.from_json(_resp.json())
@@ -7063,6 +7384,7 @@ def get_GetAgents(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetAgentsResponse.from_json(_resp.json())
@@ -7082,6 +7404,7 @@ def get_GetBestSearcherValidationMetric(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetBestSearcherValidationMetricResponse.from_json(_resp.json())
@@ -7101,6 +7424,7 @@ def get_GetCheckpoint(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetCheckpointResponse.from_json(_resp.json())
@@ -7120,6 +7444,7 @@ def get_GetCommand(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetCommandResponse.from_json(_resp.json())
@@ -7151,6 +7476,7 @@ def get_GetCommands(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetCommandsResponse.from_json(_resp.json())
@@ -7170,6 +7496,7 @@ def get_GetCurrentTrialSearcherOperation(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetCurrentTrialSearcherOperationResponse.from_json(_resp.json())
@@ -7189,6 +7516,7 @@ def get_GetExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentResponse.from_json(_resp.json())
@@ -7219,6 +7547,7 @@ def get_GetExperimentCheckpoints(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentCheckpointsResponse.from_json(_resp.json())
@@ -7240,6 +7569,7 @@ def get_GetExperimentLabels(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentLabelsResponse.from_json(_resp.json())
@@ -7270,6 +7600,7 @@ def get_GetExperimentTrials(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentTrialsResponse.from_json(_resp.json())
@@ -7289,6 +7620,7 @@ def get_GetExperimentValidationHistory(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentValidationHistoryResponse.from_json(_resp.json())
@@ -7332,10 +7664,51 @@ def get_GetExperiments(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetExperimentsResponse.from_json(_resp.json())
     raise APIHttpError("get_GetExperiments", _resp)
+
+def get_GetGroup(
+    session: "api.Session",
+    *,
+    groupId: int,
+) -> "v1GetGroupResponse":
+    _params = None
+    _resp = session._do_request(
+        method="GET",
+        path=f"/api/v1/groups/{groupId}",
+        params=_params,
+        json=None,
+        data=None,
+        headers=None,
+        timeout=None,
+        stream=False,
+    )
+    if _resp.status_code == 200:
+        return v1GetGroupResponse.from_json(_resp.json())
+    raise APIHttpError("get_GetGroup", _resp)
+
+def post_GetGroups(
+    session: "api.Session",
+    *,
+    body: "v1GetGroupsRequest",
+) -> "v1GetGroupsResponse":
+    _params = None
+    _resp = session._do_request(
+        method="POST",
+        path="/api/v1/groups/search",
+        params=_params,
+        json=body.to_json(),
+        data=None,
+        headers=None,
+        timeout=None,
+        stream=False,
+    )
+    if _resp.status_code == 200:
+        return v1GetGroupsResponse.from_json(_resp.json())
+    raise APIHttpError("post_GetGroups", _resp)
 
 def get_GetJobQueueStats(
     session: "api.Session",
@@ -7353,6 +7726,7 @@ def get_GetJobQueueStats(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetJobQueueStatsResponse.from_json(_resp.json())
@@ -7382,6 +7756,7 @@ def get_GetJobs(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetJobsResponse.from_json(_resp.json())
@@ -7399,6 +7774,7 @@ def get_GetMaster(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetMasterResponse.from_json(_resp.json())
@@ -7416,6 +7792,7 @@ def get_GetMasterConfig(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetMasterConfigResponse.from_json(_resp.json())
@@ -7435,6 +7812,7 @@ def get_GetModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelResponse.from_json(_resp.json())
@@ -7454,6 +7832,7 @@ def get_GetModelDef(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelDefResponse.from_json(_resp.json())
@@ -7474,6 +7853,7 @@ def post_GetModelDefFile(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelDefFileResponse.from_json(_resp.json())
@@ -7493,6 +7873,7 @@ def get_GetModelDefTree(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelDefTreeResponse.from_json(_resp.json())
@@ -7510,6 +7891,7 @@ def get_GetModelLabels(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelLabelsResponse.from_json(_resp.json())
@@ -7530,6 +7912,7 @@ def get_GetModelVersion(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelVersionResponse.from_json(_resp.json())
@@ -7558,6 +7941,7 @@ def get_GetModelVersions(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelVersionsResponse.from_json(_resp.json())
@@ -7599,6 +7983,7 @@ def get_GetModels(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetModelsResponse.from_json(_resp.json())
@@ -7618,6 +8003,7 @@ def get_GetNotebook(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetNotebookResponse.from_json(_resp.json())
@@ -7649,6 +8035,7 @@ def get_GetNotebooks(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetNotebooksResponse.from_json(_resp.json())
@@ -7668,6 +8055,7 @@ def get_GetProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetProjectResponse.from_json(_resp.json())
@@ -7691,6 +8079,7 @@ def get_GetResourcePools(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetResourcePoolsResponse.from_json(_resp.json())
@@ -7710,6 +8099,7 @@ def get_GetShell(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetShellResponse.from_json(_resp.json())
@@ -7741,6 +8131,7 @@ def get_GetShells(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetShellsResponse.from_json(_resp.json())
@@ -7761,6 +8152,7 @@ def get_GetSlot(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetSlotResponse.from_json(_resp.json())
@@ -7780,6 +8172,7 @@ def get_GetSlots(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetSlotsResponse.from_json(_resp.json())
@@ -7799,6 +8192,7 @@ def get_GetTask(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTaskResponse.from_json(_resp.json())
@@ -7816,6 +8210,7 @@ def get_GetTelemetry(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTelemetryResponse.from_json(_resp.json())
@@ -7835,6 +8230,7 @@ def get_GetTemplate(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTemplateResponse.from_json(_resp.json())
@@ -7864,6 +8260,7 @@ def get_GetTemplates(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTemplatesResponse.from_json(_resp.json())
@@ -7883,6 +8280,7 @@ def get_GetTensorboard(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTensorboardResponse.from_json(_resp.json())
@@ -7914,6 +8312,7 @@ def get_GetTensorboards(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTensorboardsResponse.from_json(_resp.json())
@@ -7933,6 +8332,7 @@ def get_GetTrial(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTrialResponse.from_json(_resp.json())
@@ -7963,6 +8363,7 @@ def get_GetTrialCheckpoints(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTrialCheckpointsResponse.from_json(_resp.json())
@@ -7995,6 +8396,7 @@ def get_GetTrialWorkloads(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetTrialWorkloadsResponse.from_json(_resp.json())
@@ -8014,6 +8416,7 @@ def get_GetUser(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetUserResponse.from_json(_resp.json())
@@ -8031,6 +8434,7 @@ def get_GetUserSetting(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetUserSettingResponse.from_json(_resp.json())
@@ -8058,6 +8462,7 @@ def get_GetUsers(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetUsersResponse.from_json(_resp.json())
@@ -8077,6 +8482,7 @@ def get_GetWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetWorkspaceResponse.from_json(_resp.json())
@@ -8111,6 +8517,7 @@ def get_GetWorkspaceProjects(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetWorkspaceProjectsResponse.from_json(_resp.json())
@@ -8146,6 +8553,7 @@ def get_GetWorkspaces(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1GetWorkspacesResponse.from_json(_resp.json())
@@ -8166,6 +8574,7 @@ def put_IdleNotebook(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8185,6 +8594,7 @@ def post_KillCommand(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1KillCommandResponse.from_json(_resp.json())
@@ -8204,6 +8614,7 @@ def post_KillExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8223,6 +8634,7 @@ def post_KillNotebook(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1KillNotebookResponse.from_json(_resp.json())
@@ -8242,6 +8654,7 @@ def post_KillShell(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1KillShellResponse.from_json(_resp.json())
@@ -8261,6 +8674,7 @@ def post_KillTensorboard(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1KillTensorboardResponse.from_json(_resp.json())
@@ -8280,6 +8694,7 @@ def post_KillTrial(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8299,6 +8714,7 @@ def post_LaunchCommand(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1LaunchCommandResponse.from_json(_resp.json())
@@ -8318,6 +8734,7 @@ def post_LaunchNotebook(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1LaunchNotebookResponse.from_json(_resp.json())
@@ -8337,6 +8754,7 @@ def post_LaunchShell(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1LaunchShellResponse.from_json(_resp.json())
@@ -8356,6 +8774,7 @@ def post_LaunchTensorboard(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1LaunchTensorboardResponse.from_json(_resp.json())
@@ -8375,6 +8794,7 @@ def post_Login(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1LoginResponse.from_json(_resp.json())
@@ -8392,6 +8812,7 @@ def post_Logout(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8413,6 +8834,7 @@ def post_MarkAllocationResourcesDaemon(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8433,6 +8855,7 @@ def post_MoveExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8453,6 +8876,7 @@ def post_MoveProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8473,6 +8897,7 @@ def patch_PatchExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchExperimentResponse.from_json(_resp.json())
@@ -8493,6 +8918,7 @@ def patch_PatchModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchModelResponse.from_json(_resp.json())
@@ -8514,6 +8940,7 @@ def patch_PatchModelVersion(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchModelVersionResponse.from_json(_resp.json())
@@ -8534,6 +8961,7 @@ def patch_PatchProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchProjectResponse.from_json(_resp.json())
@@ -8554,6 +8982,7 @@ def patch_PatchUser(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchUserResponse.from_json(_resp.json())
@@ -8574,6 +9003,7 @@ def patch_PatchWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PatchWorkspaceResponse.from_json(_resp.json())
@@ -8593,6 +9023,7 @@ def post_PauseExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8612,6 +9043,7 @@ def post_PinWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8632,6 +9064,7 @@ def post_PostAllocationProxyAddress(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8652,6 +9085,7 @@ def post_PostCheckpointMetadata(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostCheckpointMetadataResponse.from_json(_resp.json())
@@ -8671,6 +9105,7 @@ def post_PostModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostModelResponse.from_json(_resp.json())
@@ -8691,6 +9126,7 @@ def post_PostModelVersion(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostModelVersionResponse.from_json(_resp.json())
@@ -8711,6 +9147,7 @@ def post_PostProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostProjectResponse.from_json(_resp.json())
@@ -8730,6 +9167,7 @@ def post_PostTrialProfilerMetricsBatch(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8750,6 +9188,7 @@ def post_PostTrialRunnerMetadata(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8769,6 +9208,7 @@ def post_PostUser(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostUserResponse.from_json(_resp.json())
@@ -8788,6 +9228,7 @@ def post_PostUserSetting(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8807,6 +9248,7 @@ def post_PostWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PostWorkspaceResponse.from_json(_resp.json())
@@ -8826,6 +9268,7 @@ def post_PreviewHPSearch(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PreviewHPSearchResponse.from_json(_resp.json())
@@ -8846,6 +9289,7 @@ def put_PutProjectNotes(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PutProjectNotesResponse.from_json(_resp.json())
@@ -8866,6 +9310,7 @@ def put_PutTemplate(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1PutTemplateResponse.from_json(_resp.json())
@@ -8885,6 +9330,7 @@ def post_ReportCheckpoint(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8905,6 +9351,7 @@ def post_ReportTrialProgress(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8925,6 +9372,7 @@ def post_ReportTrialSearcherEarlyExit(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8945,6 +9393,7 @@ def post_ReportTrialTrainingMetrics(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8965,6 +9414,7 @@ def post_ReportTrialValidationMetrics(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -8982,6 +9432,7 @@ def post_ResetUserSetting(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9007,6 +9458,7 @@ def get_ResourceAllocationAggregated(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1ResourceAllocationAggregatedResponse.from_json(_resp.json())
@@ -9030,6 +9482,7 @@ def get_ResourceAllocationRaw(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1ResourceAllocationRawResponse.from_json(_resp.json())
@@ -9050,6 +9503,7 @@ def post_SetCommandPriority(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SetCommandPriorityResponse.from_json(_resp.json())
@@ -9070,6 +9524,7 @@ def post_SetNotebookPriority(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SetNotebookPriorityResponse.from_json(_resp.json())
@@ -9090,6 +9545,7 @@ def post_SetShellPriority(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SetShellPriorityResponse.from_json(_resp.json())
@@ -9110,6 +9566,7 @@ def post_SetTensorboardPriority(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SetTensorboardPriorityResponse.from_json(_resp.json())
@@ -9130,6 +9587,7 @@ def post_SetUserPassword(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SetUserPasswordResponse.from_json(_resp.json())
@@ -9162,6 +9620,7 @@ def get_SummarizeTrial(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return v1SummarizeTrialResponse.from_json(_resp.json())
@@ -9181,6 +9640,7 @@ def post_UnarchiveExperiment(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9200,6 +9660,7 @@ def post_UnarchiveModel(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9219,6 +9680,7 @@ def post_UnarchiveProject(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9238,6 +9700,7 @@ def post_UnarchiveWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9257,10 +9720,32 @@ def post_UnpinWorkspace(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
     raise APIHttpError("post_UnpinWorkspace", _resp)
+
+def put_UpdateGroup(
+    session: "api.Session",
+    *,
+    body: "v1UpdateGroupRequest",
+    groupId: int,
+) -> "v1UpdateGroupResponse":
+    _params = None
+    _resp = session._do_request(
+        method="PUT",
+        path=f"/api/v1/groups/{groupId}",
+        params=_params,
+        json=body.to_json(),
+        data=None,
+        headers=None,
+        timeout=None,
+        stream=False,
+    )
+    if _resp.status_code == 200:
+        return v1UpdateGroupResponse.from_json(_resp.json())
+    raise APIHttpError("put_UpdateGroup", _resp)
 
 def post_UpdateJobQueue(
     session: "api.Session",
@@ -9276,6 +9761,7 @@ def post_UpdateJobQueue(
         data=None,
         headers=None,
         timeout=None,
+        stream=False,
     )
     if _resp.status_code == 200:
         return
@@ -9289,6 +9775,7 @@ Paginated = typing.Union[
     v1GetExperimentCheckpointsResponse,
     v1GetExperimentTrialsResponse,
     v1GetExperimentsResponse,
+    v1GetGroupsResponse,
     v1GetJobsResponse,
     v1GetModelVersionsResponse,
     v1GetModelsResponse,

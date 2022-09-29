@@ -2,6 +2,7 @@ name: ray cluster
 debug: false
 resources:
   slots_per_trial: 2
+  shm_size: 30000000000
 searcher:
   name: single
   metric: loss

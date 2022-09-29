@@ -1,5 +1,5 @@
 FROM determinedai/environments:cuda-11.3-pytorch-1.10-tf-2.8-gpu-ecee7c1
-RUN pip install ray pyarrow
+RUN pip install ray transformers datasets diffusers pyarrow sentencepiece
 RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
     tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
     echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | \
@@ -7,6 +7,7 @@ RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
     apt update && apt install ngrok
 ARG NGROK_AUTH_TOKEN
 ENV NGROK_AUTH_TOKEN=$NGROK_AUTH_TOKEN
+ENV HF_TOKEN=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
 RUN ngrok config add-authtoken $NGROK_AUTH_TOKEN
 COPY . /raynotebook
 RUN pip install /raynotebook

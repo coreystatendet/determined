@@ -10,6 +10,8 @@ import determined as det
 RAY_PORT = 6379
 RAY_CLIENT_SERVER_PORT = 10001
 
+# TODO: Eventually, make Dashboard/GCS (RAY_PORT) available as well, e.g. for state APIs.
+
 
 def create_launch_cmd_head(proc_per_node: int) -> List[str]:
     cmd = [
@@ -88,9 +90,9 @@ def main() -> int:
     chief_ip = info.container_addrs[0]
     os.environ["DET_CHIEF_IP"] = chief_ip
     if len(info.container_addrs) > 1:
-        ray_address = f"ray://{chief_ip}:{RAY_CLIENT_SERVER_PORT}"
+        ray_address = f"http://{chief_ip}:{RAY_PORT}"
     else:
-        ray_address = f"ray://localhost:{RAY_CLIENT_SERVER_PORT}"
+        ray_address = f"http://localhost:{RAY_PORT}"
     os.environ["RAY_ADDRESS"] = ray_address
 
     if info.container_rank > 0:
